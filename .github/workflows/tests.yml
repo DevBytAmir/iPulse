@@ -1,0 +1,36 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pc-side-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dev dependencies
+        run: python3 -m pip install -r requirements-dev.txt
+
+      - name: Run PC-side unit tests
+        run: python3 -m pytest tests/test_profile_manager.py tests/test_hrv_interpreter.py tests/test_hrv_analyzer.py tests/test_history_manager.py -v
+
+      - name: Run performance benchmark suite
+        run: python3 -m pytest tests/test_performance_benchmark.py -v
+
+      - name: Run acceptance test suite
+        run: python3 -m robot --outputdir robot-output tests/robot/
+
+      - name: Upload Robot Framework report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-report
+          path: robot-output/

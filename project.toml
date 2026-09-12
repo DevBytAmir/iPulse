@@ -1,0 +1,66 @@
+[project]
+name = "ipulse"
+version = "1.0.0"
+description = "Standalone Raspberry Pi Pico W heart-rate and HRV monitor with OLED UI, local HRV analysis, MQTT publishing, and Kubios proxy support."
+authors = [{ name = "DevBytAmir" }]
+license = "MIT"
+requires-python = ">=3.11"
+readme = "README.md"
+keywords = [
+    "micropython",
+    "raspberry-pi-pico-w",
+    "heart-rate",
+    "hrv",
+    "ssd1306",
+    "mqtt",
+]
+
+[micropython]
+board = "Raspberry Pi Pico W"
+firmware = "MicroPython >= 1.20"
+main = "main.py"
+boot = "boot.py"
+
+[release]
+status = "ready"
+secrets = "none"
+notes = [
+    "Edit src/config.py with local WiFi and MQTT values before deployment.",
+]
+
+[deploy]
+tool = "mpremote"
+command = "./upload.sh"
+
+files = [
+    { source = "boot.py", target = ":boot.py" },
+    { source = "main.py", target = ":main.py" },
+    { source = "src/config.py", target = ":src/config.py" },
+    { source = "src/icons.py", target = ":src/icons.py" },
+    { source = "src/profile_manager.py", target = ":src/profile_manager.py" },
+    { source = "src/hrv_interpreter.py", target = ":src/hrv_interpreter.py" },
+    { source = "src/display_manager.py", target = ":src/display_manager.py" },
+    { source = "src/heart_rate_sensor.py", target = ":src/heart_rate_sensor.py" },
+    { source = "src/hrv_analysis.py", target = ":src/hrv_analysis.py" },
+    { source = "src/history_manager.py", target = ":src/history_manager.py" },
+    { source = "src/network_manager.py", target = ":src/network_manager.py" },
+    { source = "src/kubios_client.py", target = ":src/kubios_client.py" },
+    { source = "src/menu_controller.py", target = ":src/menu_controller.py" },
+    { source = "lib/fifo.py", target = ":lib/fifo.py" },
+    { source = "lib/led.py", target = ":lib/led.py" },
+    { source = "lib/piotimer.py", target = ":lib/piotimer.py" },
+    { source = "lib/ssd1306.py", target = ":lib/ssd1306.py" },
+    { source = "lib/umqtt/simple.py", target = ":lib/umqtt/simple.py" },
+]
+
+directories = [
+    ":lib",
+    ":lib/umqtt",
+    ":src",
+]
+
+[tests]
+runner = "pytest"
+commands = [
+    "pytest tests/test_profile_manager.py tests/test_hrv_interpreter.py tests/test_hrv_analyzer.py tests/test_history_manager.py",
+]
